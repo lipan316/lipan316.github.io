@@ -231,7 +231,7 @@
               
                 
                 <a class="post-title-link" href="/2016/10/24/new-article/" itemprop="url">
-                  new article
+                  iOS四种保存数据的方式
                 </a>
               
             
@@ -274,10 +274,23 @@
       
         
           
-            <p>#iOS四种保存数据的方式</p>
-<p>##1. NSKeyedArchiver</p>
+            <h1 id="iOS四种保存数据的方式"><a href="#iOS四种保存数据的方式" class="headerlink" title="iOS四种保存数据的方式"></a>iOS四种保存数据的方式</h1><p>##1. NSKeyedArchiver</p>
 <blockquote>
 <p>采用归档的形式来保存数据，该数据对象需要遵守NSCoding协议，并且该对象对应的类必须提供encodeWithCoder:和initWithCoder:方法。前一个方法告诉系统怎么对对象进行编码，而后一个方法则是告诉系统怎么对对象进行解码。例如对Possession对象归档保存。</p>
+<p>定义Possession：<br><code>1
+@interface  Possession：NSObject&lt;NSCoding&gt;{//遵守NSCoding协议
+       NSString *name;//待归档类型
+}    
+@implementation Possession
+-(void)encodeWithCoder:(NSCoder *)aCoder{
+            [aCoder encodeObject:name forKey:@&quot;name&quot;];
+}
+-(void)initWithCoder:(NSCoder *)aDecoder{
+            name=[[aDeCoder decodeObjectforKey:@&quot;name&quot;] retain];
+}</code></p>
+<p>归档操作：<br>如果对Possession对象allPossession归档保存，只需要NSCoder子类NSKeyedArchiver的方法archiveRootObject:toFile: 即可。<br><code>1
+NSString *path = [self possessionArchivePath];
+[NSKeyedArchiver archiveRootObject:allPossessions toFile: path ]</code><br>解压操作：<br>同样调用NSCoder子类NSKeyedArchiver的方法unarchiveRootObject:toFile: 即可<br><code>allPossessions = [[NSKeyedUnarchiver unarchiveObjectWithFile:path] retain];</code><br>*1 缺点：归档的形式来保存数据，只能一次性归档保存以及一次性解压。所以只能针对小量数据，而且对数据操作比较笨拙，即如果想改动数据的某一小部分，还是需要解压整个数据或者归档整个数据。</p>
 </blockquote>
 
           
